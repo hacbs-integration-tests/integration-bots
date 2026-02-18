@@ -1,0 +1,24 @@
+# Local env with keys and IDs — never commit
+.env
+.env.local
+user.env
+*.json
+!package*.json
+# OAuth and tokens (keep these out of the repo)
+credentials_drive_oauth.json
+token_drive.json
+*service*account*.json
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.eggs/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
