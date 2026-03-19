@@ -47,7 +47,7 @@ def create_drive_tools(service, slides_service=None):
 
     @tool
     def get_latest_sprint_number() -> str:
-        """List present and old folders, find all 'Integration Team Sprint N Demo' files, and return the latest sprint number N and the file id of the current demo in present (if any). Returns a short summary like 'Latest sprint: 305, current present file id: abc123' or 'Latest sprint: 305, no file in present'."""
+        """List present and old folders, find all 'Integration Team Sprint N Demo' files, and return the latest sprint number N and the file ids of the current demos in present (if any). Returns a short summary like 'Latest sprint: 305, current present file ids: abc123, def456' or 'Latest sprint: 305, no files in present'."""
         present_id = config.PRESENT_FOLDER_ID
         old_id = config.OLD_FOLDER_ID
         if not present_id or not old_id:
@@ -55,7 +55,7 @@ def create_drive_tools(service, slides_service=None):
                 "Error: PRESENT_FOLDER_ID and OLD_FOLDER_ID must be set in .env."
             )
         max_sprint = None
-        present_file_id = None
+        present_file_ids = []
         try:
             for folder_id, folder_label in [(present_id, "present"), (old_id, "old")]:
                 results = (
@@ -73,16 +73,17 @@ def create_drive_tools(service, slides_service=None):
                         if max_sprint is None or n > max_sprint:
                             max_sprint = n
                         if folder_label == "present":
-                            present_file_id = f["id"]
+                            present_file_ids.append(f["id"])
             if max_sprint is None:
                 max_sprint = config.DEFAULT_SPRINT_NUMBER
                 return (
                     f"No existing demo files found. Using default sprint number: {max_sprint}. "
-                    "No file in present."
+                    "No files in present."
                 )
-            if present_file_id:
-                return f"Latest sprint: {max_sprint}, current present file id: {present_file_id}"
-            return f"Latest sprint: {max_sprint}, no file in present"
+            if present_file_ids:
+                ids_str = ", ".join(present_file_ids)
+                return f"Latest sprint: {max_sprint}, current present file ids: {ids_str}"
+            return f"Latest sprint: {max_sprint}, no files in present"
         except Exception as e:
             return f"Error getting latest sprint: {e}"
 
