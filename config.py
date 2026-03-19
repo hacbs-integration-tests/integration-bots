@@ -46,3 +46,8 @@ DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY", "")
 # Gemini (Google AI) — set GOOGLE_API_KEY or GEMINI_API_KEY in .env when LLM_PROVIDER=gemini
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY", "")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
+
+# Slack — post new demo link to team channel. Use either (1) webhook or (2) bot token + channel.
+SLACK_WEBHOOK_URL = os.getenv("SLACK_WEBHOOK_URL", "").strip()
+SLACK_BOT_TOKEN = os.getenv("SLACK_BOT_TOKEN", "").strip()
+SLACK_CHANNEL_ID = os.getenv("SLACK_CHANNEL_ID", "").strip()

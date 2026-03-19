@@ -6,11 +6,12 @@ These must **not** be committed to GitHub:
 
 | File or content | Why |
 |-----------------|-----|
-| **`.env`** | Contains API keys (OpenAI, DeepSeek, Gemini), folder IDs, OAuth paths, and possibly paths to key files. |
+| **`.env`** | Contains API keys (OpenAI, DeepSeek, Gemini), Slack token/webhook, folder IDs, OAuth paths, and possibly paths to key files. |
 | **`.env.local`**, **`user.env`** | Same kind of local config. |
 | **`credentials_drive_oauth.json`** | OAuth client secret from Google Cloud; anyone with it could impersonate your app. |
 | **`token_drive.json`** | OAuth refresh token; gives access to your Google Drive. |
 | **Service account JSON** (e.g. `sprint-demo-bot-service-account.json` or any `*service*account*.json`) | Private key for the bot; full access to whatever the service account can do. |
+| **Slack Bot Token** (`xoxb-...`) or **Slack Webhook URL** | Posting to your team channel; keep in `.env` only. |
 
 Your **`.gitignore`** is set up to exclude these (and `*.json` in the project root, except `package*.json`). Double-check before the first push.
 
