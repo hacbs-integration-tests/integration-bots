@@ -63,7 +63,7 @@ Find the sprint whose `state` is `"active"`. Extract the sprint number from its 
 
 ```
 jira_get /rest/api/3/search/jql
-  jql: sprint in openSprints() AND assignee = "<accountId>" AND status in ("In Review", "Review", "Closed", "Resolved", "Done")
+  jql: sprint in openSprints() AND assignee = "<accountId>" AND status in ("In Review", "Review", "Closed", "Resolved", "Done", "Release Pending")
   fields: summary,status,description
 ```
 
