@@ -1,0 +1,85 @@
+skill_name: investigate-e2e-artifacts
+description: Validates the investigate-e2e-artifacts skill — PR discovery, oras download workflow,
+  parallel analysis instructions, RCA report generation with file-anchored evidence.
+
+copy_to_home:
+  - .config/gh
+
+test_scenarios:
+  - name: recognise-pr-url-trigger
+    description: Skill is invoked when user provides a GitHub PR URL and asks to investigate e2e failures
+    prompt: "Investigate the e2e test failures on https://github.com/konflux-ci/integration-service/pull/1649"
+    model: sonnet
+    samples: 3
+    expected:
+      contains_keywords:
+        - oras
+        - quay.io/konflux-test-storage
+        - find-oras-url.sh
+    baseline_failure: "Without skill, Claude doesn't know the quay.io/konflux-test-storage artifact URL pattern or that it needs to run find-oras-url.sh"
+
+  - name: prerequisite-check-described
+    description: Skill instructs Claude to check for oras, gh, and jq before proceeding
+    prompt: "analyze e2e artifacts for PR https://github.com/konflux-ci/integration-service/pull/1649"
+    model: haiku
+    samples: 3
+    expected:
+      contains_keywords:
+        - which oras
+        - which jq
+        - which gh
+    baseline_failure: "Without skill, Claude does not check for prerequisites before running oras pull"
+
+  - name: folder-numbering-logic
+    description: Skill uses next-folder.sh to compute an incremented folder name
+    prompt: "Download e2e artifacts for PR https://github.com/konflux-ci/integration-service/pull/1649 — I already have oras-artifacts_01 in my directory"
+    model: sonnet
+    samples: 3
+    expected:
+      contains_keywords:
+        - next-folder.sh
+        - oras-artifacts_02
+    baseline_failure: "Without skill, Claude invents its own folder naming with no zero-padding or increment logic"
+
+  - name: parallel-analysis-all-five-agents
+    description: Skill instructs Claude to issue all five analysis tool calls in one response turn
+    prompt: "I have downloaded artifacts to oras-artifacts_01/. Analyze them for e2e test failures."
+    model: sonnet
+    samples: 3
+    expected:
+      contains_keywords:
+        - e2e-report.xml
+        - e2e-tests.log
+        - events.json
+        - pods
+        - pipelineruns.json
+        - simultaneously
+    baseline_failure: "Without skill, Claude analyzes files one at a time and misses cross-file correlation"
+
+  - name: rca-report-with-file-citations
+    description: Final INVESTIGATION.md report includes file:line evidence citations
+    prompt: "Write a root cause analysis report for the e2e failures in oras-artifacts_01/"
+    model: sonnet
+    samples: 3
+    expected:
+      contains_keywords:
+        - INVESTIGATION.md
+        - Hypothesis
+        - Evidence
+        - CONFIDENCE
+      does_not_contain:
+        - I don't have access
+        - unable to analyze
+        - I cannot read
+    baseline_failure: "Without skill, Claude produces generic advice with no file citations and no structured hypothesis format"
+
+  - name: no-failed-run-found-graceful-stop
+    description: Skill stops gracefully and prints recovery instructions when no failed e2e run exists
+    prompt: "investigate e2e artifacts for https://github.com/konflux-ci/integration-service/pull/9999"
+    model: haiku
+    samples: 3
+    expected:
+      contains_keywords:
+        - find-oras-url.sh
+        - konflux-ci-qe-bot
+    baseline_failure: "Without skill, Claude guesses an oras URL or gives generic error with no recovery path"

@@ -34,6 +34,32 @@ To avoid uploading secrets (API keys, `.env`, OAuth and service account files), 
 
    Optionally set `TEMPLATE_NAME_PATTERN` and `DEFAULT_SPRINT_NUMBER` (see `.env.example`).
 
+## Investigating Konflux e2e failures
+
+This repository includes the `investigate-e2e-artifacts` Claude skill. It discovers the failed
+Konflux e2e OCI artifact for a GitHub PR, downloads it with `oras`, correlates test, Kubernetes,
+pod, and Tekton logs, and writes a file-anchored `INVESTIGATION.md` report.
+
+Run Claude Code from the repository root and ask, for example:
+
+```text
+Investigate the e2e test failures on https://github.com/konflux-ci/integration-service/pull/1649
+```
+
+Before using it, install and authenticate these tools:
+
+```bash
+gh auth login
+```
+
+- `gh` — GitHub CLI
+- `jq` — JSON processing tool
+- `oras` — OCI artifact client
+
+The skill creates numbered `oras-artifacts_NN/` folders and stores the report in the selected
+folder. See [the skill README](.claude/skills/investigate-e2e-artifacts/README.md) for setup,
+troubleshooting, and output details.
+
 ## Run once
 
 From the project root (with venv active):
