@@ -1,8 +1,12 @@
 #!/usr/bin/env python3
 """Run the sprint demo automation agent once. Intended for cron (e.g. every two weeks)."""
+import gc
 import logging
+import os
 import sys
 from pathlib import Path
+
+os.environ.setdefault("PYTHONMALLOC", "malloc")
 
 # Ensure project root is on path when running as script
 _root = Path(__file__).resolve().parent
@@ -36,10 +40,13 @@ def main():
             logger.info("Agent finished: %s", content)
         else:
             logger.info("Agent finished (no messages in state).")
+        gc.collect()
         return 0
     except Exception as e:
         logger.exception("Agent run failed: %s", e)
         return 1
+    finally:
+        gc.collect()
 
 
 if __name__ == "__main__":
